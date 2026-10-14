@@ -624,8 +624,16 @@ onMounted(() => {
           />
         </div>
 
-        <div v-if="!auth.user" class="p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg">
-          ⚠️ You are currently using guest mode. Template will be saved locally or in the public session. <Link :href="route('login')" class="underline font-bold">Sign in</Link> to permanently attach templates to your account.
+        <div v-if="!auth.user" class="p-3.5 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-xl space-y-2">
+          <p class="font-medium">⚠️ <strong>Guest Mode:</strong> To permanently organize and manage your custom templates across devices, please Sign Up or Sign In.</p>
+          <div class="flex items-center space-x-2 pt-1">
+            <Link :href="route('register')" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded font-bold transition">
+              Sign Up Free
+            </Link>
+            <Link :href="route('login')" class="px-2.5 py-1 bg-white hover:bg-amber-100 border border-amber-300 text-amber-800 rounded font-semibold transition">
+              Sign In
+            </Link>
+          </div>
         </div>
 
         <div class="pt-2 flex justify-end space-x-2">

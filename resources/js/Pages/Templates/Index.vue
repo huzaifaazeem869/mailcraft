@@ -96,13 +96,28 @@ const deleteTemplate = async (id) => {
             >
               Sign In
             </Link>
+            <Link
+              :href="route('register')"
+              class="text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg transition"
+            >
+              Sign Up
+            </Link>
           </template>
           <template v-else>
             <Link
               :href="route('profile.edit')"
-              class="text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-2"
+              class="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3 py-2 flex items-center space-x-1.5"
             >
-              Account
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+              <span>My Account</span>
+            </Link>
+            <Link
+              :href="route('logout')"
+              method="post"
+              as="button"
+              class="text-xs font-semibold text-red-600 hover:text-red-700 px-2 py-1 hover:bg-red-50 rounded transition"
+            >
+              Logout
             </Link>
           </template>
 
