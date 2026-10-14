@@ -15,7 +15,11 @@ Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::post('register/send-code', [RegisteredUserController::class, 'sendCode'])
+        ->name('register.sendCode');
+
+    Route::post('register/verify', [RegisteredUserController::class, 'verifyAndRegister'])
+        ->name('register.verify');
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
@@ -58,6 +62,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
+    Route::post('password/send-code', [PasswordController::class, 'sendCode'])->name('password.sendCode');
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])

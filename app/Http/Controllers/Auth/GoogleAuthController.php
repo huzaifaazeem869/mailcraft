@@ -17,6 +17,12 @@ class GoogleAuthController extends Controller
      */
     public function redirect(): RedirectResponse
     {
+        if (empty(config('services.google.client_id')) || empty(config('services.google.client_secret'))) {
+            return redirect()->route('login')->withErrors([
+                'email' => 'Google OAuth credentials are not configured yet in .env file. Please add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET or sign in with email.',
+            ]);
+        }
+
         return Socialite::driver('google')->redirect();
     }
 

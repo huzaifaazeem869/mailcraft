@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\EmailVerificationCode;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -16,16 +18,25 @@ class RegistrationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_new_users_can_register(): void
+    public function test_new_users_can_register_via_otp(): void
     {
-        $response = $this->post('/register', [
-            'name' => 'Test User',
+        EmailVerificationCode::create([
             'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'code' => '123456',
+            'type' => 'signup',
+            'payload' => [
+                'name' => 'Test User',
+                'password' => Hash::make('password'),
+            ],
+            'expires_at' => now()->addMinutes(15),
         ]);
 
+        $response = $this->postJson('/register/verify', [
+            'email' => 'test@example.com',
+            'code' => '123456',
+        ]);
+
+        $response->assertStatus(200);
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
     }
 }

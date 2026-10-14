@@ -34,19 +34,23 @@ const submit = () => {
         <Head title="Sign In" />
 
         <div class="mb-6 text-center">
-            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Welcome Back</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Sign in to save and manage your email templates</p>
+            <h2 class="text-2xl font-extrabold text-slate-900">Welcome Back</h2>
+            <p class="text-xs text-slate-500 mt-1">Sign in to save and manage your email templates</p>
         </div>
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+        <div v-if="status" class="mb-4 p-3 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200">
             {{ status }}
+        </div>
+
+        <div v-if="$page.props.errors && $page.props.errors.email" class="mb-4 p-3 rounded-lg bg-red-50 text-red-600 text-xs font-medium border border-red-200">
+            {{ $page.props.errors.email }}
         </div>
 
         <!-- Google OAuth Button -->
         <div class="mb-5">
             <a
                 href="/auth/google"
-                class="w-full flex items-center justify-center space-x-2 py-2.5 px-4 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm transition active:scale-98"
+                class="w-full flex items-center justify-center space-x-2.5 py-2.5 px-4 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 shadow-sm transition active:scale-98"
             >
                 <svg class="w-4 h-4" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -90,7 +94,7 @@ const submit = () => {
                     <Link
                         v-if="canResetPassword"
                         :href="route('password.request')"
-                        class="text-xs text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+                        class="text-xs text-indigo-600 hover:text-indigo-500 font-semibold"
                     >
                         Forgot password?
                     </Link>
@@ -111,7 +115,7 @@ const submit = () => {
             <div class="mt-4 block">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-slate-600 dark:text-slate-400">Remember me</span>
+                    <span class="ms-2 text-xs text-slate-600 font-medium">Remember me</span>
                 </label>
             </div>
 
@@ -125,11 +129,11 @@ const submit = () => {
                 </PrimaryButton>
             </div>
 
-            <div class="mt-5 text-center text-xs text-slate-600 dark:text-slate-400">
+            <div class="mt-5 text-center text-xs text-slate-600">
                 Don't have an account?
                 <Link
                     :href="route('register')"
-                    class="font-bold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 ml-1 underline"
+                    class="font-bold text-indigo-600 hover:text-indigo-500 ml-1 underline"
                 >
                     Sign Up Free
                 </Link>
