@@ -25,3 +25,13 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+*.zip
+*.ps1
+*.env*
+server_prod.env
+server_*.htaccess
+check_*.php
+extract_*.php
+package_*.php
+run_*.php
+php_info_probe.php

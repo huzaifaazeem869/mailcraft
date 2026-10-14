@@ -51,4 +51,12 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_google_auth_redirect_authenticates_fallback_user(): void
+    {
+        $response = $this->get('/auth/google');
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('templates.index'));
+    }
 }

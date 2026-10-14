@@ -135,7 +135,7 @@ const submit = () => {
                     :href="route('register')"
                     class="font-bold text-indigo-600 hover:text-indigo-500 ml-1 underline"
                 >
-                    Sign Up Free
+                    Sign Up
                 </Link>
             </div>
         </form>
