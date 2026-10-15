@@ -52,11 +52,12 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect('/');
     }
 
-    public function test_google_auth_redirect_authenticates_fallback_user(): void
+    public function test_google_auth_redirect_redirects_to_google(): void
     {
         $response = $this->get('/auth/google');
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('templates.index'));
+        $response->assertStatus(302);
+        $this->assertStringStartsWith('https://accounts.google.com/o/oauth2/auth', $response->headers->get('Location'));
+        $this->assertStringContainsString('client_id=997709218797-f4a9pb3m6ik4cb1udvtupfd0j98o7bp1.apps.googleusercontent.com', $response->headers->get('Location'));
     }
 }
