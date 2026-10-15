@@ -122,17 +122,25 @@ defineEmits(['select', 'delete', 'duplicate']);
         }"
       >
         <img
-          :src="block.props.src || 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&auto=format&fit=crop'"
+          v-if="block.props.src"
+          :src="block.props.src"
           :alt="block.props.alt || 'Image'"
           referrerpolicy="no-referrer"
           loading="eager"
-          class="inline-block max-w-full h-auto object-cover"
+          class="inline-block max-w-full h-auto object-contain"
           :style="{
             width: block.props.width || '100%',
             maxWidth: block.props.maxWidth || '100%',
             borderRadius: block.props.borderRadius || '0px',
           }"
         />
+        <div
+          v-else
+          class="inline-flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-300 rounded-lg text-slate-400 bg-slate-50"
+        >
+          <span class="text-2xl mb-1">🖼️</span>
+          <span class="text-xs font-semibold">Click to select image / logo</span>
+        </div>
       </div>
 
       <!-- DIVIDER -->

@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { ref } from 'vue';
+
+const props = defineProps({
   block: {
     type: Object,
     default: null,
@@ -11,6 +13,44 @@ defineProps({
 });
 
 defineEmits(['update:block', 'update:brand', 'insertVariable']);
+
+const fileInputRef = ref(null);
+const imageError = ref(false);
+
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    alert('Please select a valid image file (PNG, JPG, SVG, WebP, GIF)');
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Image file size should be less than 5MB');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    if (props.block && props.block.props) {
+      props.block.props.src = e.target.result;
+      imageError.value = false;
+    }
+  };
+  reader.readAsDataURL(file);
+};
+
+const triggerFileInput = () => {
+  fileInputRef.value?.click();
+};
+
+const setPresetSize = (width, maxWidth) => {
+  if (props.block && props.block.props) {
+    props.block.props.width = width;
+    props.block.props.maxWidth = maxWidth;
+  }
+};
 
 const mergeTags = [
   { label: 'Recipient Name', tag: '{{name}}' },
@@ -200,34 +240,118 @@ const mergeTags = [
 
         <!-- IMAGE BLOCK -->
         <template v-else-if="block.type === 'image'">
+          <!-- Live Preview Box in Panel -->
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg flex flex-col items-center justify-center min-h-[90px] relative overflow-hidden">
+            <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-2 self-start">Image / Logo Preview</span>
+            <div v-if="block.props.src" class="relative max-h-32 max-w-full flex items-center justify-center p-1.5 bg-white rounded border border-slate-200 shadow-sm">
+              <img
+                :src="block.props.src"
+                :alt="block.props.alt || 'Preview'"
+                referrerpolicy="no-referrer"
+                class="max-h-28 max-w-full object-contain"
+                @error="imageError = true"
+                @load="imageError = false"
+              />
+            </div>
+            <div v-if="imageError" class="mt-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2.5 py-1 text-center font-medium">
+              ⚠️ Image cannot load from URL. Upload file directly below.
+            </div>
+          </div>
+
+          <!-- Upload Button -->
+          <div>
+            <input
+              ref="fileInputRef"
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="handleFileUpload"
+            />
+            <button
+              type="button"
+              @click="triggerFileInput"
+              class="w-full flex items-center justify-center space-x-2 px-3 py-2.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-lg font-bold text-xs transition active:scale-98"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+              <span>📁 Upload Logo / Image From PC</span>
+            </button>
+            <p class="text-[10px] text-slate-400 mt-1 text-center">Supports PNG, JPG, SVG, WebP (Instant zero-error loading)</p>
+          </div>
+
+          <div class="relative my-2">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
+            <div class="relative flex justify-center text-[10px] uppercase"><span class="bg-white px-2 text-slate-400">Or Paste Image URL</span></div>
+          </div>
+
+          <!-- URL Input -->
           <div>
             <label class="block text-xs font-medium text-gray-700 mb-1">Image URL</label>
             <input
               v-model="block.props.src"
               type="text"
               placeholder="https://..."
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              @input="imageError = false"
             />
           </div>
+
+          <!-- Quick Size Presets for Logos & Banners -->
           <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1">Alt Text</label>
-            <input
-              v-model="block.props.alt"
-              type="text"
-              placeholder="Descriptive text"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
-            />
+            <label class="block text-xs font-medium text-gray-700 mb-1.5">Size Presets</label>
+            <div class="grid grid-cols-2 gap-1.5">
+              <button
+                type="button"
+                @click="setPresetSize('120px', '120px')"
+                class="px-2 py-1.5 text-xs bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded font-semibold text-slate-700 transition"
+              >
+                Small Logo (120px)
+              </button>
+              <button
+                type="button"
+                @click="setPresetSize('160px', '160px')"
+                class="px-2 py-1.5 text-xs bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded font-semibold text-slate-700 transition"
+              >
+                Medium Logo (160px)
+              </button>
+              <button
+                type="button"
+                @click="setPresetSize('240px', '240px')"
+                class="px-2 py-1.5 text-xs bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded font-semibold text-slate-700 transition"
+              >
+                Large Logo (240px)
+              </button>
+              <button
+                type="button"
+                @click="setPresetSize('100%', '100%')"
+                class="px-2 py-1.5 text-xs bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded font-semibold text-slate-700 transition"
+              >
+                Full Banner (100%)
+              </button>
+            </div>
           </div>
+
           <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Width</label>
+              <input
+                v-model="block.props.width"
+                type="text"
+                placeholder="160px or 100%"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+              />
+            </div>
             <div>
               <label class="block text-xs font-medium text-gray-700 mb-1">Max Width</label>
               <input
                 v-model="block.props.maxWidth"
                 type="text"
-                placeholder="600px or 100%"
+                placeholder="160px or 600px"
                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
               />
             </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium text-gray-700 mb-1">Alignment</label>
               <select
@@ -239,7 +363,17 @@ const mergeTags = [
                 <option value="right">Right</option>
               </select>
             </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Alt Text</label>
+              <input
+                v-model="block.props.alt"
+                type="text"
+                placeholder="Company Logo"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+              />
+            </div>
           </div>
+
           <div>
             <label class="block text-xs font-medium text-gray-700 mb-1">Link URL (Optional)</label>
             <input

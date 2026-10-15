@@ -108,6 +108,12 @@ const availableBlocks = [
   },
   {
     type: 'image',
+    label: 'Brand Logo',
+    icon: '🏷️',
+    defaultProps: { src: 'https://dummyimage.com/160x40/4f46e5/ffffff&text=YOUR+LOGO', alt: 'Company Logo', align: 'center', width: '160px', maxWidth: '160px', borderRadius: '0px', padding: '24px 24px 12px 24px' },
+  },
+  {
+    type: 'image',
     label: 'Image Banner',
     icon: '🖼️',
     defaultProps: { src: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&auto=format&fit=crop', alt: 'Email Graphic', align: 'center', width: '100%', maxWidth: '100%', borderRadius: '4px', padding: '16px 24px' },
