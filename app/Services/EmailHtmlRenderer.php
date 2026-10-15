@@ -187,7 +187,7 @@ HTML;
                 $url = $props['url'] ?? null;
                 $borderRadius = $props['borderRadius'] ?? '0px';
 
-                $imgTag = "<img src=\"{$src}\" alt=\"{$alt}\" border=\"0\" style=\"display: block; width: {$width}; max-width: {$maxWidth}; height: auto; border-radius: {$borderRadius};\" class=\"img-fluid\" />";
+                $imgTag = "<img src=\"{$src}\" alt=\"{$alt}\" border=\"0\" referrerpolicy=\"no-referrer\" style=\"display: block; width: {$width}; max-width: {$maxWidth}; height: auto; border-radius: {$borderRadius};\" class=\"img-fluid\" />";
                 if ($url) {
                     $imgTag = "<a href=\"" . htmlspecialchars($url) . "\" target=\"_blank\">{$imgTag}</a>";
                 }

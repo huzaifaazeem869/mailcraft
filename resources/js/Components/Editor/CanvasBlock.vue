@@ -124,6 +124,8 @@ defineEmits(['select', 'delete', 'duplicate']);
         <img
           :src="block.props.src || 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&auto=format&fit=crop'"
           :alt="block.props.alt || 'Image'"
+          referrerpolicy="no-referrer"
+          loading="eager"
           class="inline-block max-w-full h-auto object-cover"
           :style="{
             width: block.props.width || '100%',

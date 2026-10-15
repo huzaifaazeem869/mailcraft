@@ -317,6 +317,9 @@ const saveTemplateToServer = async () => {
     if (res.data.success) {
       alert(res.data.message);
       isSaveModalOpen.value = false;
+      if (res.data.template?.slug) {
+        window.location.href = `/editor/${res.data.template.slug}`;
+      }
     }
   } catch (err) {
     alert('Failed to save template. ' + (err.response?.data?.message || ''));
@@ -628,7 +631,7 @@ onMounted(() => {
           <p class="font-medium">⚠️ <strong>Guest Mode:</strong> To permanently organize and manage your custom templates across devices, please Sign Up or Sign In.</p>
           <div class="flex items-center space-x-2 pt-1">
             <Link :href="route('register')" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded font-bold transition">
-              Sign Up Free
+              Sign Up
             </Link>
             <Link :href="route('login')" class="px-2.5 py-1 bg-white hover:bg-amber-100 border border-amber-300 text-amber-800 rounded font-semibold transition">
               Sign In
