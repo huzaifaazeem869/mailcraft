@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { ref, reactive, computed, onMounted, watch } from 'vue';
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import draggable from 'vuedraggable';
 import CanvasBlock from '@/Components/Editor/CanvasBlock.vue';
 import PropertyPanel from '@/Components/Editor/PropertyPanel.vue';
@@ -334,8 +334,66 @@ const saveTemplateToServer = async () => {
   }
 };
 
+// Mobile floating pill movable position
+const pillPositionY = ref(null); // null means default bottom. If set, pixel value from viewport top
+const isDraggingPill = ref(false);
+const dragStartY = ref(0);
+const dragStartTop = ref(0);
+const pillRef = ref(null);
+
+const togglePillDock = () => {
+  const windowHeight = window.innerHeight;
+  // If currently near the bottom or null, dock to top (68px below header)
+  if (pillPositionY.value === null || pillPositionY.value > windowHeight / 2) {
+    pillPositionY.value = 68;
+  } else {
+    pillPositionY.value = windowHeight - 74;
+  }
+};
+
+const onPillTouchStart = (e) => {
+  const touch = e.touches ? e.touches[0] : e;
+  isDraggingPill.value = true;
+  dragStartY.value = touch.clientY;
+  
+  if (pillRef.value) {
+    const rect = pillRef.value.getBoundingClientRect();
+    dragStartTop.value = rect.top;
+  }
+};
+
+const onPillTouchMove = (e) => {
+  if (!isDraggingPill.value) return;
+  if (e.cancelable) e.preventDefault();
+  const touch = e.touches ? e.touches[0] : e;
+  const deltaY = touch.clientY - dragStartY.value;
+  let newTop = dragStartTop.value + deltaY;
+  
+  // Bounds check (between header ~64px and viewport bottom ~70px)
+  const minTop = 64;
+  const maxTop = window.innerHeight - 74;
+  newTop = Math.max(minTop, Math.min(newTop, maxTop));
+  
+  pillPositionY.value = newTop;
+};
+
+const onPillTouchEnd = () => {
+  isDraggingPill.value = false;
+};
+
 onMounted(() => {
   pushHistory();
+  window.addEventListener('mousemove', onPillTouchMove);
+  window.addEventListener('mouseup', onPillTouchEnd);
+  window.addEventListener('touchmove', onPillTouchMove, { passive: false });
+  window.addEventListener('touchend', onPillTouchEnd);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('mousemove', onPillTouchMove);
+  window.removeEventListener('mouseup', onPillTouchEnd);
+  window.removeEventListener('touchmove', onPillTouchMove);
+  window.removeEventListener('touchend', onPillTouchEnd);
 });
 </script>
 
@@ -500,7 +558,7 @@ onMounted(() => {
 
       <!-- 2. CENTER CANVAS PREVIEW -->
       <main
-        class="flex-1 overflow-y-auto p-2 sm:p-6 lg:p-8 flex justify-center items-start transition-colors relative"
+        class="flex-1 overflow-y-auto p-2 pb-36 sm:p-6 sm:pb-36 lg:p-8 lg:pb-8 flex justify-center items-start transition-colors relative"
         :class="{ 'hidden lg:flex': mobileTab !== 'canvas' }"
         :style="{ backgroundColor: brand.bodyBg }"
         @click="selectBlock(null)"
@@ -554,22 +612,38 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Mobile Floating Pill when block is selected -->
+        <!-- Mobile Floating Pill when block is selected (Movable & Dockable) -->
         <div
+          ref="pillRef"
           v-if="selectedBlock"
-          class="lg:hidden fixed bottom-4 inset-x-3 sm:inset-x-6 bg-slate-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl p-2.5 sm:p-3 flex items-center justify-between z-30 border border-slate-700 animate-in fade-in slide-in-from-bottom-2 duration-150"
+          class="lg:hidden fixed inset-x-3 sm:inset-x-6 bg-slate-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl p-2 sm:p-2.5 flex items-center justify-between z-40 border border-slate-700 select-none transition-all duration-75"
+          :style="pillPositionY !== null ? { top: `${pillPositionY}px`, bottom: 'auto' } : { bottom: '16px' }"
           @click.stop
         >
-          <div class="flex items-center space-x-2 truncate">
-            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 bg-indigo-500 rounded text-white shrink-0">
+          <!-- Drag Handle & Block Info -->
+          <div
+            class="flex items-center space-x-1.5 cursor-grab active:cursor-grabbing shrink-0 py-1 touch-none"
+            @mousedown="onPillTouchStart"
+            @touchstart="onPillTouchStart"
+            title="Drag up or down"
+          >
+            <!-- Visual Drag Grip Icon -->
+            <div class="px-1 text-slate-400 hover:text-white flex flex-col items-center justify-center space-y-0.5">
+              <div class="w-3.5 h-0.5 bg-slate-400 rounded-full"></div>
+              <div class="w-3.5 h-0.5 bg-slate-400 rounded-full"></div>
+              <div class="w-3.5 h-0.5 bg-slate-400 rounded-full"></div>
+            </div>
+            <span class="text-[10px] font-extrabold uppercase px-1.5 py-0.5 bg-indigo-500 rounded text-white shrink-0">
               {{ selectedBlock.type }}
             </span>
-            <span class="text-xs text-slate-200 truncate font-medium">Selected</span>
+            <span class="text-[11px] text-slate-400 font-mono hidden xs:inline">⠿ Move</span>
           </div>
-          <div class="flex items-center space-x-2 shrink-0">
+
+          <!-- Actions & Dock Toggle -->
+          <div class="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
             <button
               @click="mobileTab = 'settings'"
-              class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition shadow-xs flex items-center space-x-1"
+              class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition shadow-xs flex items-center space-x-1"
             >
               <span>⚙️ Edit</span>
             </button>
@@ -587,6 +661,17 @@ onMounted(() => {
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </button>
+
+            <!-- Quick Dock Toggle: Flip Up/Down -->
+            <button
+              @click="togglePillDock"
+              class="px-2 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded text-xs font-bold text-slate-200 transition flex items-center space-x-0.5"
+              :title="pillPositionY !== null && pillPositionY < 200 ? 'Shift to Bottom' : 'Shift to Top'"
+            >
+              <span v-if="pillPositionY !== null && pillPositionY < 200">🔽 Down</span>
+              <span v-else>🔼 Up</span>
+            </button>
+
             <button
               @click="selectedBlockId = null"
               class="p-1 text-slate-400 hover:text-white"
