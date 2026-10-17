@@ -61,10 +61,10 @@ const deleteTemplate = async (id) => {
 <template>
   <Head title="Free Open-Source Email Template Builder" />
 
-  <div class="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
+  <div class="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans overflow-x-hidden">
     <!-- TOP NAVIGATION -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
-      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-2.5 sm:space-x-3 shrink-0">
           <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -83,7 +83,7 @@ const deleteTemplate = async (id) => {
           <a
             href="https://huzaifaazeem.com"
             target="_blank"
-            class="hidden md:flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 px-3 h-9 rounded-lg border border-slate-200 hover:border-indigo-200 transition"
+            class="hidden lg:flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 px-3 h-9 rounded-lg border border-slate-200 hover:border-indigo-200 transition shrink-0"
           >
             <span>👨‍💻 By Huzaifa Azeem</span>
           </a>
@@ -91,7 +91,7 @@ const deleteTemplate = async (id) => {
           <template v-if="isGuest">
             <Link
               :href="route('login')"
-              class="h-9 px-3 sm:px-3.5 text-xs font-semibold text-slate-700 hover:text-indigo-600 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition flex items-center justify-center whitespace-nowrap"
+              class="h-9 px-3 sm:px-3.5 text-xs font-semibold text-slate-700 hover:text-indigo-600 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition flex items-center justify-center whitespace-nowrap shrink-0"
             >
               Sign In
             </Link>
@@ -99,7 +99,7 @@ const deleteTemplate = async (id) => {
           <template v-else>
             <Link
               :href="route('profile.edit')"
-              class="h-9 px-2.5 sm:px-3 text-xs font-semibold text-slate-700 hover:text-slate-900 border border-slate-200 bg-white rounded-lg flex items-center justify-center space-x-1.5 whitespace-nowrap shadow-sm"
+              class="h-9 px-2.5 sm:px-3 text-xs font-semibold text-slate-700 hover:text-slate-900 border border-slate-200 bg-white rounded-lg flex items-center justify-center space-x-1.5 whitespace-nowrap shadow-sm shrink-0"
             >
               <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
               <span>My Account</span>
@@ -108,7 +108,7 @@ const deleteTemplate = async (id) => {
               :href="route('logout')"
               method="post"
               as="button"
-              class="h-9 px-2.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition flex items-center justify-center whitespace-nowrap"
+              class="h-9 px-2.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition flex items-center justify-center whitespace-nowrap shrink-0"
             >
               Logout
             </Link>
@@ -116,7 +116,7 @@ const deleteTemplate = async (id) => {
 
           <Link
             :href="route('editor.new')"
-            class="h-9 px-3 sm:px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm shadow-indigo-100 transition active:scale-95 flex items-center justify-center space-x-1.5 whitespace-nowrap"
+            class="h-9 px-3 sm:px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm shadow-indigo-100 transition active:scale-95 flex items-center justify-center space-x-1.5 whitespace-nowrap shrink-0"
           >
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             <span>Blank Canvas</span>
@@ -218,15 +218,15 @@ const deleteTemplate = async (id) => {
 
       <!-- PREDEFINED TEMPLATES GALLERY -->
       <section id="predefined">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <div>
-            <h2 class="text-2xl font-bold text-slate-900">Predefined Email Templates</h2>
-            <p class="text-sm text-slate-500">Pick any ready-to-use template and customize it in the visual editor.</p>
+        <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-5 mb-8">
+          <div class="min-w-0">
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Predefined Email Templates</h2>
+            <p class="text-sm text-slate-500 mt-1">Pick any ready-to-use template and customize it in the visual editor.</p>
           </div>
 
           <!-- Search & Filter Controls -->
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full md:w-auto">
-            <div class="relative w-full sm:w-56 shrink-0">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full xl:w-auto min-w-0">
+            <div class="relative w-full sm:w-60 shrink-0">
               <input
                 v-model="searchQuery"
                 type="text"
@@ -235,13 +235,13 @@ const deleteTemplate = async (id) => {
               />
               <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
-            <div class="flex items-center space-x-1.5 overflow-x-auto py-1 max-w-full pb-2 sm:pb-1 -mx-1 px-1">
+            <div class="flex items-center space-x-1.5 overflow-x-auto py-1 w-full min-w-0 max-w-full pb-2 sm:pb-1 scrollbar-none">
               <button
                 v-for="cat in categories"
                 :key="cat"
                 @click="selectedCategory = cat"
-                class="h-9 px-4 text-xs font-semibold rounded-lg transition whitespace-nowrap shrink-0 flex items-center justify-center shadow-sm"
-                :class="selectedCategory === cat ? 'bg-indigo-600 text-white shadow-indigo-100' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'"
+                class="h-9 px-3.5 text-xs font-semibold rounded-lg transition whitespace-nowrap shrink-0 flex items-center justify-center shadow-sm"
+                :class="selectedCategory === cat ? 'bg-indigo-600 text-white shadow-indigo-100 font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'"
               >
                 {{ cat }}
               </button>
@@ -257,12 +257,14 @@ const deleteTemplate = async (id) => {
             class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col hover:shadow-lg transition-all duration-200 group"
           >
             <!-- Header preview graphic -->
-            <div class="h-44 bg-gradient-to-br from-indigo-50 via-slate-50 to-purple-50 p-6 flex flex-col justify-center items-center text-center border-b border-slate-100 group-hover:scale-[1.01] transition-transform">
-              <span class="text-3xl mb-2">✉️</span>
-              <span class="text-xs font-semibold uppercase tracking-wider text-indigo-700 bg-white/80 backdrop-blur px-2.5 py-1 rounded-full border border-indigo-100 shadow-sm">
+            <div class="h-44 bg-gradient-to-br from-indigo-50/80 via-slate-50 to-purple-50/80 p-6 flex flex-col justify-center items-center text-center border-b border-slate-100 group-hover:scale-[1.01] transition-transform">
+              <div class="w-12 h-12 rounded-xl bg-white shadow-sm border border-indigo-100/70 flex items-center justify-center text-indigo-600 mb-2.5">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+              </div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 bg-white/90 backdrop-blur px-3 py-0.5 rounded-full border border-indigo-100 shadow-xs">
                 {{ t.category }}
               </span>
-              <p class="text-xs text-slate-500 mt-2 font-mono">
+              <p class="text-[11px] text-slate-500 mt-2 font-mono">
                 {{ t.design_json?.blocks?.length || 0 }} Block Elements
               </p>
             </div>

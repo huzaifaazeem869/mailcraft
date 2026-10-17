@@ -488,27 +488,27 @@ onBeforeUnmount(() => {
       </div>
     </header>
 
-    <!-- MOBILE NAVIGATION TAB BAR (< lg) -->
-    <div class="lg:hidden bg-slate-100/90 backdrop-blur border-b border-slate-200 px-2 py-1.5 flex items-center justify-between shrink-0 z-20">
-      <div class="grid grid-cols-3 gap-1.5 w-full">
+    <!-- MOBILE / TABLET NAVIGATION TAB BAR (< xl) -->
+    <div class="xl:hidden bg-slate-100/90 backdrop-blur border-b border-slate-200 px-3 sm:px-6 py-2 flex items-center justify-between shrink-0 z-20">
+      <div class="grid grid-cols-3 gap-2 w-full max-w-xl mx-auto">
         <button
           @click="mobileTab = 'canvas'"
-          class="py-1.5 px-2 text-xs font-bold rounded-lg flex items-center justify-center space-x-1 transition"
-          :class="mobileTab === 'canvas' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'"
+          class="py-2 px-3 text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-1.5 transition shadow-xs"
+          :class="mobileTab === 'canvas' ? 'bg-indigo-600 text-white shadow-indigo-100' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'"
         >
           <span>📱 Canvas</span>
         </button>
         <button
           @click="mobileTab = 'blocks'"
-          class="py-1.5 px-2 text-xs font-bold rounded-lg flex items-center justify-center space-x-1 transition"
-          :class="mobileTab === 'blocks' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'"
+          class="py-2 px-3 text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-1.5 transition shadow-xs"
+          :class="mobileTab === 'blocks' ? 'bg-indigo-600 text-white shadow-indigo-100' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'"
         >
           <span>➕ Elements</span>
         </button>
         <button
           @click="mobileTab = 'settings'"
-          class="py-1.5 px-2 text-xs font-bold rounded-lg flex items-center justify-center space-x-1 transition"
-          :class="mobileTab === 'settings' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'"
+          class="py-2 px-3 text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-1.5 transition shadow-xs"
+          :class="mobileTab === 'settings' ? 'bg-indigo-600 text-white shadow-indigo-100' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'"
         >
           <span>⚙️ {{ selectedBlock ? 'Edit' : 'Brand' }}</span>
         </button>
@@ -519,15 +519,15 @@ onBeforeUnmount(() => {
     <div class="flex-1 flex overflow-hidden relative">
       <!-- 1. LEFT TOOLBAR: BLOCKS -->
       <aside
-        class="w-full lg:w-64 bg-white border-r border-slate-200 flex flex-col shrink-0"
-        :class="{ 'hidden lg:flex': mobileTab !== 'blocks' }"
+        class="w-full xl:w-64 bg-white border-r border-slate-200 flex flex-col shrink-0"
+        :class="{ 'hidden xl:flex': mobileTab !== 'blocks' }"
       >
         <div class="p-3 sm:p-4 border-b border-slate-100 flex items-center justify-between">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Block Elements</span>
           <span class="text-[10px] text-slate-400">Tap or Drag to Add</span>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-3 space-y-2">
+        <div class="flex-1 overflow-y-auto p-3 sm:p-6 xl:p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-1 gap-3 space-y-0">
           <div
             v-for="b in availableBlocks"
             :key="b.type"
@@ -541,7 +541,7 @@ onBeforeUnmount(() => {
               <p class="text-xs font-bold text-slate-700 group-hover:text-indigo-900 truncate">{{ b.label }}</p>
               <p class="text-[10px] text-slate-400 font-mono">{{ b.type }}</p>
             </div>
-            <span class="text-[11px] text-indigo-600 font-bold lg:hidden shrink-0 bg-white px-2 py-1 rounded border border-indigo-100 shadow-xs">+ Add</span>
+            <span class="text-[11px] text-indigo-600 font-bold xl:hidden shrink-0 bg-white px-2 py-1 rounded border border-indigo-100 shadow-xs">+ Add</span>
           </div>
         </div>
 
@@ -558,8 +558,8 @@ onBeforeUnmount(() => {
 
       <!-- 2. CENTER CANVAS PREVIEW -->
       <main
-        class="flex-1 overflow-y-auto p-2 pb-36 sm:p-6 sm:pb-36 lg:p-8 lg:pb-8 flex justify-center items-start transition-colors relative"
-        :class="{ 'hidden lg:flex': mobileTab !== 'canvas' }"
+        class="flex-1 overflow-y-auto p-2 pb-36 sm:p-6 sm:pb-36 xl:p-8 xl:pb-8 flex justify-center items-start transition-colors relative"
+        :class="{ 'hidden xl:flex': mobileTab !== 'canvas' }"
         :style="{ backgroundColor: brand.bodyBg }"
         @click="selectBlock(null)"
       >
@@ -568,7 +568,7 @@ onBeforeUnmount(() => {
           class="bg-white shadow-xl rounded-md transition-all duration-200 overflow-hidden my-2 sm:my-4 w-full"
           :style="{
             width: previewMode === 'mobile' ? '375px' : (brand.canvasWidth || '600px'),
-            maxWidth: brand.canvasWidth || '600px',
+            maxWidth: previewMode === 'mobile' ? '375px' : (brand.canvasWidth || '600px'),
             backgroundColor: brand.canvasBg,
             fontFamily: brand.fontFamily,
           }"
@@ -605,18 +605,18 @@ onBeforeUnmount(() => {
             <p class="text-xs mt-1">Add elements to design your email.</p>
             <button
               @click="mobileTab = 'blocks'"
-              class="mt-3 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm transition inline-flex items-center space-x-1.5"
+              class="mt-3 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm transition inline-flex items-center space-x-1.5 xl:hidden"
             >
               <span>➕ Add Elements</span>
             </button>
           </div>
         </div>
 
-        <!-- Mobile Floating Pill when block is selected (Movable & Dockable) -->
+        <!-- Mobile & Tablet Floating Pill when block is selected (Movable & Dockable) -->
         <div
           ref="pillRef"
           v-if="selectedBlock"
-          class="lg:hidden fixed inset-x-3 sm:inset-x-6 bg-slate-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl p-2 sm:p-2.5 flex items-center justify-between z-40 border border-slate-700 select-none transition-all duration-75"
+          class="xl:hidden fixed inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-auto sm:min-w-[420px] sm:max-w-xl bg-slate-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl p-2 sm:p-2.5 flex items-center justify-between z-40 border border-slate-700 select-none transition-all duration-75"
           :style="pillPositionY !== null ? { top: `${pillPositionY}px`, bottom: 'auto' } : { bottom: '16px' }"
           @click.stop
         >
@@ -685,14 +685,14 @@ onBeforeUnmount(() => {
 
       <!-- 3. RIGHT SIDEBAR: PROPERTIES & BRAND KIT -->
       <aside
-        class="w-full lg:w-80 bg-white border-l border-slate-200 shrink-0 flex flex-col"
-        :class="{ 'hidden lg:flex': mobileTab !== 'settings' }"
+        class="w-full xl:w-80 bg-white border-l border-slate-200 shrink-0 flex flex-col"
+        :class="{ 'hidden xl:flex': mobileTab !== 'settings' }"
       >
-        <!-- Mobile Top Back to Canvas button -->
-        <div class="lg:hidden p-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+        <!-- Mobile/Tablet Top Back to Canvas button -->
+        <div class="xl:hidden p-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
           <button
             @click="mobileTab = 'canvas'"
-            class="flex items-center space-x-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800"
+            class="flex items-center space-x-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-white px-3 py-1.5 rounded-lg border border-indigo-100 shadow-xs"
           >
             <span>← Back to Canvas</span>
           </button>
