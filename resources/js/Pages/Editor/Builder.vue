@@ -20,6 +20,7 @@ const props = defineProps({
 const templateName = ref(props.initialTemplate?.name || 'Untitled Email Template');
 const category = ref(props.initialTemplate?.category || 'Custom');
 const previewMode = ref('desktop'); // 'desktop' or 'mobile'
+const mobileTab = ref('canvas'); // 'canvas' | 'blocks' | 'settings'
 const selectedBlockId = ref(null);
 const isExportModalOpen = ref(false);
 const isSaveModalOpen = ref(false);
@@ -172,6 +173,7 @@ const addBlock = (blockDef) => {
   };
   blocks.value.push(newBlock);
   selectedBlockId.value = newBlock.id;
+  mobileTab.value = 'canvas';
   pushHistory();
 };
 
@@ -342,55 +344,53 @@ onMounted(() => {
 
   <div class="h-screen flex flex-col bg-slate-100 overflow-hidden text-slate-800 font-sans select-none">
     <!-- TOP NAVBAR -->
-    <header class="h-14 bg-white border-b border-slate-200 px-4 flex items-center justify-between z-30 shrink-0">
+    <header class="h-14 bg-white border-b border-slate-200 px-2.5 sm:px-4 flex items-center justify-between z-30 shrink-0">
       <!-- Left: Logo & Template Title -->
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
         <Link
           :href="route('templates.index')"
-          class="flex items-center space-x-2 text-slate-700 hover:text-indigo-600 font-bold transition"
+          class="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition shrink-0 shadow-xs"
           title="Back to Templates Gallery"
         >
-          <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-          </div>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         </Link>
 
-        <div class="h-6 w-px bg-slate-200"></div>
+        <div class="h-5 w-px bg-slate-200 hidden xs:block"></div>
 
-        <div>
+        <div class="flex items-center">
           <input
             v-model="templateName"
             type="text"
-            class="font-bold text-sm text-slate-800 border-none hover:bg-slate-50 focus:bg-white rounded px-2 py-1 focus:ring-1 focus:ring-indigo-500 w-52 sm:w-72"
+            class="font-bold text-xs sm:text-sm text-slate-800 border-none hover:bg-slate-50 focus:bg-white rounded px-1.5 py-1 focus:ring-1 focus:ring-indigo-500 w-24 xs:w-36 sm:w-56 truncate"
             placeholder="Template Name..."
           />
         </div>
       </div>
 
-      <!-- Center: Undo/Redo & Device Mode Toggle -->
-      <div class="flex items-center space-x-4">
+      <!-- Center: Undo/Redo & Viewport Mode -->
+      <div class="flex items-center space-x-2">
         <!-- History Controls -->
-        <div class="flex items-center space-x-1 border border-slate-200 rounded-lg p-0.5 bg-slate-50">
+        <div class="flex items-center space-x-0.5 border border-slate-200 rounded-lg p-0.5 bg-slate-50 shrink-0">
           <button
             @click="undo"
             :disabled="historyIndex <= 0"
-            class="p-1.5 rounded hover:bg-white text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent"
+            class="p-1 sm:p-1.5 rounded hover:bg-white text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent"
             title="Undo (Ctrl+Z)"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
           </button>
           <button
             @click="redo"
             :disabled="historyIndex >= history.length - 1"
-            class="p-1.5 rounded hover:bg-white text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent"
+            class="p-1 sm:p-1.5 rounded hover:bg-white text-slate-600 disabled:opacity-30 disabled:hover:bg-transparent"
             title="Redo (Ctrl+Y)"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg>
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg>
           </button>
         </div>
 
-        <!-- Viewport Toggle -->
-        <div class="hidden sm:flex items-center space-x-1 border border-slate-200 rounded-lg p-0.5 bg-slate-50">
+        <!-- Viewport Toggle (Desktop only) -->
+        <div class="hidden md:flex items-center space-x-1 border border-slate-200 rounded-lg p-0.5 bg-slate-50 shrink-0">
           <button
             @click="previewMode = 'desktop'"
             class="px-2.5 py-1 text-xs font-semibold rounded flex items-center space-x-1.5 transition"
@@ -411,31 +411,62 @@ onMounted(() => {
       </div>
 
       <!-- Right: Action Buttons -->
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
         <button
           @click="isSaveModalOpen = true"
-          class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg shadow-sm transition"
+          class="h-8 sm:h-9 px-2 sm:px-3 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg shadow-xs transition flex items-center justify-center whitespace-nowrap"
         >
-          Save Template
+          <span>Save</span>
         </button>
 
         <button
           @click="openExportModal"
-          class="px-3.5 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm shadow-indigo-200 transition flex items-center space-x-1.5"
+          class="h-8 sm:h-9 px-2.5 sm:px-3.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs shadow-indigo-100 transition flex items-center justify-center space-x-1 whitespace-nowrap"
         >
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-          <span>Export HTML</span>
+          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+          <span class="hidden xs:inline">Export HTML</span>
+          <span class="xs:hidden">Export</span>
         </button>
       </div>
     </header>
 
-    <!-- WORKSPACE 3-COLUMN LAYOUT -->
-    <div class="flex-1 flex overflow-hidden">
+    <!-- MOBILE NAVIGATION TAB BAR (< lg) -->
+    <div class="lg:hidden bg-slate-100/90 backdrop-blur border-b border-slate-200 px-2 py-1.5 flex items-center justify-between shrink-0 z-20">
+      <div class="grid grid-cols-3 gap-1.5 w-full">
+        <button
+          @click="mobileTab = 'canvas'"
+          class="py-1.5 px-2 text-xs font-bold rounded-lg flex items-center justify-center space-x-1 transition"
+          :class="mobileTab === 'canvas' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'"
+        >
+          <span>📱 Canvas</span>
+        </button>
+        <button
+          @click="mobileTab = 'blocks'"
+          class="py-1.5 px-2 text-xs font-bold rounded-lg flex items-center justify-center space-x-1 transition"
+          :class="mobileTab === 'blocks' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'"
+        >
+          <span>➕ Elements</span>
+        </button>
+        <button
+          @click="mobileTab = 'settings'"
+          class="py-1.5 px-2 text-xs font-bold rounded-lg flex items-center justify-center space-x-1 transition"
+          :class="mobileTab === 'settings' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'"
+        >
+          <span>⚙️ {{ selectedBlock ? 'Edit' : 'Brand' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- WORKSPACE 3-COLUMN / TABBED LAYOUT -->
+    <div class="flex-1 flex overflow-hidden relative">
       <!-- 1. LEFT TOOLBAR: BLOCKS -->
-      <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0">
-        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+      <aside
+        class="w-full lg:w-64 bg-white border-r border-slate-200 flex flex-col shrink-0"
+        :class="{ 'hidden lg:flex': mobileTab !== 'blocks' }"
+      >
+        <div class="p-3 sm:p-4 border-b border-slate-100 flex items-center justify-between">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Block Elements</span>
-          <span class="text-[10px] text-slate-400">Click or Drag</span>
+          <span class="text-[10px] text-slate-400">Tap or Drag to Add</span>
         </div>
 
         <div class="flex-1 overflow-y-auto p-3 space-y-2">
@@ -443,23 +474,24 @@ onMounted(() => {
             v-for="b in availableBlocks"
             :key="b.type"
             @click="addBlock(b)"
-            class="flex items-center space-x-3 p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg cursor-pointer transition group shadow-sm active:scale-98"
+            class="flex items-center space-x-3 p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg cursor-pointer transition group shadow-xs active:scale-98"
           >
             <div class="w-8 h-8 rounded-md bg-white border border-slate-200 group-hover:border-indigo-300 flex items-center justify-center text-sm text-indigo-600 font-bold shrink-0">
               {{ b.icon }}
             </div>
-            <div>
-              <p class="text-xs font-bold text-slate-700 group-hover:text-indigo-900">{{ b.label }}</p>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-bold text-slate-700 group-hover:text-indigo-900 truncate">{{ b.label }}</p>
               <p class="text-[10px] text-slate-400 font-mono">{{ b.type }}</p>
             </div>
+            <span class="text-[11px] text-indigo-600 font-bold lg:hidden shrink-0 bg-white px-2 py-1 rounded border border-indigo-100 shadow-xs">+ Add</span>
           </div>
         </div>
 
         <!-- Global Settings Quick Trigger -->
         <div class="p-3 border-t border-slate-200 bg-slate-50">
           <button
-            @click="selectBlock(null)"
-            class="w-full py-2 px-3 text-xs font-bold rounded-lg border text-slate-700 bg-white hover:bg-slate-100 flex items-center justify-center space-x-2 transition"
+            @click="selectBlock(null); mobileTab = 'settings'"
+            class="w-full py-2 px-3 text-xs font-bold rounded-lg border text-slate-700 bg-white hover:bg-slate-100 flex items-center justify-center space-x-2 transition shadow-xs"
           >
             <span>🎨 Global Brand Kit</span>
           </button>
@@ -468,16 +500,17 @@ onMounted(() => {
 
       <!-- 2. CENTER CANVAS PREVIEW -->
       <main
-        class="flex-1 overflow-y-auto p-4 sm:p-8 flex justify-center items-start transition-colors"
+        class="flex-1 overflow-y-auto p-2 sm:p-6 lg:p-8 flex justify-center items-start transition-colors relative"
+        :class="{ 'hidden lg:flex': mobileTab !== 'canvas' }"
         :style="{ backgroundColor: brand.bodyBg }"
         @click="selectBlock(null)"
       >
         <!-- Canvas Frame Container -->
         <div
-          class="bg-white shadow-xl rounded-md transition-all duration-200 overflow-hidden my-4"
+          class="bg-white shadow-xl rounded-md transition-all duration-200 overflow-hidden my-2 sm:my-4 w-full"
           :style="{
             width: previewMode === 'mobile' ? '375px' : (brand.canvasWidth || '600px'),
-            maxWidth: '100%',
+            maxWidth: brand.canvasWidth || '600px',
             backgroundColor: brand.canvasBg,
             fontFamily: brand.fontFamily,
           }"
@@ -508,21 +541,86 @@ onMounted(() => {
           <!-- Empty Canvas Drop Indicator -->
           <div
             v-if="blocks.length === 0"
-            class="p-12 text-center border-2 border-dashed border-slate-300 m-6 rounded-lg text-slate-400"
+            class="p-8 sm:p-12 text-center border-2 border-dashed border-slate-300 m-4 sm:m-6 rounded-lg text-slate-400"
           >
             <p class="text-sm font-semibold">Your canvas is empty</p>
-            <p class="text-xs mt-1">Click blocks in the left sidebar to add elements.</p>
+            <p class="text-xs mt-1">Add elements to design your email.</p>
+            <button
+              @click="mobileTab = 'blocks'"
+              class="mt-3 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm transition inline-flex items-center space-x-1.5"
+            >
+              <span>➕ Add Elements</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Floating Pill when block is selected -->
+        <div
+          v-if="selectedBlock"
+          class="lg:hidden fixed bottom-4 inset-x-3 sm:inset-x-6 bg-slate-900/95 backdrop-blur-md text-white rounded-xl shadow-2xl p-2.5 sm:p-3 flex items-center justify-between z-30 border border-slate-700 animate-in fade-in slide-in-from-bottom-2 duration-150"
+          @click.stop
+        >
+          <div class="flex items-center space-x-2 truncate">
+            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 bg-indigo-500 rounded text-white shrink-0">
+              {{ selectedBlock.type }}
+            </span>
+            <span class="text-xs text-slate-200 truncate font-medium">Selected</span>
+          </div>
+          <div class="flex items-center space-x-2 shrink-0">
+            <button
+              @click="mobileTab = 'settings'"
+              class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition shadow-xs flex items-center space-x-1"
+            >
+              <span>⚙️ Edit</span>
+            </button>
+            <button
+              @click="duplicateBlock(selectedBlock)"
+              class="p-1 text-slate-300 hover:text-white"
+              title="Duplicate"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </button>
+            <button
+              @click="deleteBlock(selectedBlock.id)"
+              class="p-1 text-red-400 hover:text-red-300"
+              title="Delete"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+            <button
+              @click="selectedBlockId = null"
+              class="p-1 text-slate-400 hover:text-white"
+              title="Deselect"
+            >
+              ✕
+            </button>
           </div>
         </div>
       </main>
 
       <!-- 3. RIGHT SIDEBAR: PROPERTIES & BRAND KIT -->
-      <aside class="w-80 bg-white border-l border-slate-200 shrink-0 flex flex-col">
-        <PropertyPanel
-          :block="selectedBlock"
-          :brand="brand"
-          @insert-variable="insertVariableIntoBlock"
-        />
+      <aside
+        class="w-full lg:w-80 bg-white border-l border-slate-200 shrink-0 flex flex-col"
+        :class="{ 'hidden lg:flex': mobileTab !== 'settings' }"
+      >
+        <!-- Mobile Top Back to Canvas button -->
+        <div class="lg:hidden p-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+          <button
+            @click="mobileTab = 'canvas'"
+            class="flex items-center space-x-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800"
+          >
+            <span>← Back to Canvas</span>
+          </button>
+          <span class="text-xs text-slate-400 font-medium">Done editing? Tap back</span>
+        </div>
+
+        <div class="flex-1 overflow-hidden">
+          <PropertyPanel
+            :block="selectedBlock"
+            :brand="brand"
+            @insert-variable="insertVariableIntoBlock"
+          />
+        </div>
       </aside>
     </div>
 
